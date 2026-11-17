@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Lab 4 Step 3：Logback 结构化日志（JSON）。
+  使用 logback-classic 1.5 自带的 ch.qos.logback.classic.encoder.JsonEncoder，
+  不新增任何 Maven 依赖；每行日志是一个 JSON 对象，含 timestamp / level / thread / logger / message / exception。
+-->
+<configuration>
+
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.JsonEncoder"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_CONSOLE"/>
+    </root>
+
+</configuration>
