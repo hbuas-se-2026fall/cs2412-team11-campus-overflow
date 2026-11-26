@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "cd .. && husky"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
