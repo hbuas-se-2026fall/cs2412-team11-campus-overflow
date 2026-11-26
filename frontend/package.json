@@ -1,37 +1,37 @@
 {
-  "name":"campus-overflow-web",
-  "private":true,
-  "version":"0.1.0",
-  "type":"module",
+  "name": "campus-overflow-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev":"vite",
-    "build":"tsc --noEmit && vite build",
-    "preview":"vite preview",
-    "lint":"eslint .",
-    "lint:fix":"eslint . --fix",
-    "format":"prettier --write .",
-    "typecheck":"tsc --noEmit",
-    "prepare":"husky"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
   },
-  "lint-staged":{
-    "*.{ts,tsx}":[
+  "lint-staged": {
+    "*.{ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{css,json,html}":[
+    "*.{css,json,html}": [
       "prettier --write"
     ]
   },
-  "dependencies":{
-    "@tanstack/react-query":"^5.56.2",
-    "antd":"^5.21.0",
-    "axios":"^1.7.7",
-    "react":"^18.3.1",
-    "react-dom":"^18.3.1",
-    "react-router-dom":"^6.26.2",
-    "zustand":"^4.5.5"
+  "dependencies": {
+    "@tanstack/react-query": "^5.56.2",
+    "antd": "^5.21.0",
+    "axios": "^1.7.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "zustand": "^4.5.5"
   },
-    "devDependencies": {
+  "devDependencies": {
     "@eslint/js": "^9.10.0",
     "@types/node": "^22.7.4",
     "@types/react": "^18.3.10",
