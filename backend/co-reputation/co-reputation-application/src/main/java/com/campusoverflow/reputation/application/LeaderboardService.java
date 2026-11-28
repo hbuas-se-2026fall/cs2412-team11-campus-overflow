@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LeaderboardService {
 
+    static final String CONSUMER = "reputation.leaderboard";
+
     private final LeaderboardStore store;
     private final ReputationAccountRepository accounts;
     private final IdentityApi identity;
@@ -35,13 +37,33 @@ public class LeaderboardService {
     @EventListener
     @Transactional
     public void on(ReputationChangedEvent e) {
-        // TODO(S3)：实现 LeaderboardService.on——参考领域单元测试与 arc42 文档中的业务规则
-        throw new UnsupportedOperationException("TODO(S3)：LeaderboardService.on 尚未实现");
+        if (!processed.markProcessed(e.eventId(), CONSUMER)) {
+            return;
+        }
+        store.increment(e.userId(), e.delta(), e.occurredAt());
     }
 
     @Transactional(readOnly = true)
     public List<LeaderboardEntryView> top(LeaderboardPeriod period, int limit) {
-        // TODO(S3)：实现 LeaderboardService.top——参考领域单元测试与 arc42 文档中的业务规则
-        throw new UnsupportedOperationException("TODO(S3)：LeaderboardService.top 尚未实现");
+        int size = Math.min(Math.max(limit, 1), 100);
+        List<LeaderboardStore.Entry> entries;
+        if (period == LeaderboardPeriod.ALL) {
+            entries = accounts.topByReputation(size).stream()
+                    .map(a -> new LeaderboardStore.Entry(a.userId(), a.reputation()))
+                    .toList();
+        } else {
+            entries = store.top(period, clock.instant(), size);
+        }
+        Map<Long, UserSummary> users = identity.findUsers(entries.stream().map(LeaderboardStore.Entry::userId).toList());
+        List<LeaderboardEntryView> result = new ArrayList<>(entries.size());
+        int rank = 1;
+        for (LeaderboardStore.Entry entry : entries) {
+            UserSummary user = users.get(entry.userId());
+            result.add(new LeaderboardEntryView(rank++, entry.userId(),
+                    user == null ? "已注销用户" : user.displayName(),
+                    user != null && user.verified(),
+                    entry.score()));
+        }
+        return result;
     }
 }
