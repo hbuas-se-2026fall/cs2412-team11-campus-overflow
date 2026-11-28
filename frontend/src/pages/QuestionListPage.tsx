@@ -1,16 +1,57 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuestions } from '@/features/questions/hooks';
+import { usePopularTags, useQuestionsByTag } from '@/features/tags/hooks';
 import { useAuthStore } from '@/shared/store/auth';
 
 export function QuestionListPage() {
-  const { data, isLoading, error } = useQuestions();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTag = searchParams.get('tag');
   const me = useAuthStore((state) => state.me);
 
+  const all = useQuestions();
+  const byTag = useQuestionsByTag(activeTag);
+  const tags = usePopularTags();
+
+  const data = activeTag ? byTag.data : all.data;
+  const isLoading = activeTag ? byTag.isLoading : all.isLoading;
+  const error = activeTag ? byTag.error : all.error;
+
+  const selectTag = (tag: string | null) => {
+    if (tag) {
+      setSearchParams({ tag });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   return (
-    <div className="layout">
+    <div className="layout listlayout">
+      <aside className="tagpanel">
+        <h2>热门标签</h2>
+        {tags.isLoading && <p className="muted">加载中…</p>}
+        {tags.data?.length === 0 && <p className="muted">暂无标签</p>}
+        <ul>
+          {tags.data?.map((tag) => (
+            <li key={tag.name}>
+              <button
+                className={activeTag === tag.name ? 'tag active' : 'tag'}
+                onClick={() => selectTag(activeTag === tag.name ? null : tag.name)}
+              >
+                {tag.name} <span className="muted">{tag.questionCount}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </aside>
+
       <section>
         <div className="toolbar">
-          <h1>全部问题</h1>
+          <h1>{activeTag ? `标签：${activeTag}` : '全部问题'}</h1>
+          {activeTag && (
+            <button onClick={() => selectTag(null)} className="linklike">
+              清除筛选
+            </button>
+          )}
           <div className="spacer" />
           <Link className="primary" to="/questions/new">
             {me ? '我要提问' : '登录后提问'}
@@ -39,9 +80,9 @@ export function QuestionListPage() {
                 <p className="excerpt">{question.excerpt}</p>
                 <div className="tagrow">
                   {question.tags.map((tag) => (
-                    <span key={tag} className="tag">
+                    <button key={tag} className="tag" onClick={() => selectTag(tag)}>
                       {tag}
-                    </span>
+                    </button>
                   ))}
                   <span className="muted">
                     {question.author.displayName} · {new Date(question.createdAt).toLocaleString('zh-CN')}
@@ -52,7 +93,9 @@ export function QuestionListPage() {
           ))}
         </ul>
 
-        {data && data.items.length === 0 && <p className="muted">还没有问题，点右上角发布第一个。</p>}
+        {data && data.items.length === 0 && (
+          <p className="muted">{activeTag ? `标签 ${activeTag} 下还没有问题。` : '还没有问题，点右上角发布第一个。'}</p>
+        )}
       </section>
     </div>
   );
