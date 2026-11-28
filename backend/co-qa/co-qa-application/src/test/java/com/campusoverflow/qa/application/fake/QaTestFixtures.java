@@ -3,12 +3,22 @@ package com.campusoverflow.qa.application.fake;
 import com.campusoverflow.identity.api.CourseSummary;
 import com.campusoverflow.identity.api.IdentityApi;
 import com.campusoverflow.identity.api.UserSummary;
+import com.campusoverflow.qa.application.port.ContentRenderer;
+import com.campusoverflow.qa.application.port.QaReadModel;
 import com.campusoverflow.qa.application.port.QuestionListCache;
+import com.campusoverflow.qa.application.port.ViewCounter;
+import com.campusoverflow.qa.application.query.AnswerRow;
+import com.campusoverflow.qa.application.query.CommentRow;
+import com.campusoverflow.qa.application.query.QuestionRow;
 import com.campusoverflow.qa.application.query.QuestionSummaryView;
+import com.campusoverflow.qa.application.query.TagView;
 import com.campusoverflow.qa.domain.Answer;
 import com.campusoverflow.qa.domain.AnswerRepository;
+import com.campusoverflow.qa.domain.Comment;
+import com.campusoverflow.qa.domain.CommentRepository;
 import com.campusoverflow.qa.domain.Question;
 import com.campusoverflow.qa.domain.QuestionRepository;
+import com.campusoverflow.qa.domain.TagRepository;
 import com.campusoverflow.qa.domain.TargetType;
 import com.campusoverflow.qa.domain.Vote;
 import com.campusoverflow.qa.domain.VoteRepository;
@@ -179,10 +189,11 @@ public final class QaTestFixtures {
 
     public static class CountingCache implements QuestionListCache {
         public int invalidations;
+        public PageResult<QuestionSummaryView> preloaded;
 
         @Override
         public Optional<PageResult<QuestionSummaryView>> get(Long courseId, PageRequest page) {
-            return Optional.empty();
+            return Optional.ofNullable(preloaded);
         }
 
         @Override
@@ -201,6 +212,96 @@ public final class QaTestFixtures {
         @Override
         public void record(String action, Long actorId, String targetType, String targetId, String detail) {
             actions.add(action);
+        }
+    }
+
+    /** 记录标签使用量变化，用于断言“发布 +1、删除 -1、编辑按差量调整”。 */
+    public static class RecordingTags implements TagRepository {
+        public final Map<String, Integer> deltas = new LinkedHashMap<>();
+
+        @Override
+        public void adjustUsage(Collection<String> tagNames, int delta) {
+            tagNames.forEach(name -> deltas.merge(name, delta, Integer::sum));
+        }
+    }
+
+    /** 渲染端口替身：HTML 直接回显，纯文本截断，便于断言摘要长度。 */
+    public static class StubRenderer implements ContentRenderer {
+        @Override
+        public String toSafeHtml(String markdown) {
+            return "<p>" + markdown + "</p>";
+        }
+
+        @Override
+        public String toPlainText(String markdown, int maxLength) {
+            return markdown.length() <= maxLength ? markdown : markdown.substring(0, maxLength);
+        }
+    }
+
+    public static class InMemoryComments implements CommentRepository {
+        private final Map<Long, Comment> store = new LinkedHashMap<>();
+        private final AtomicLong sequence = new AtomicLong();
+
+        @Override
+        public Optional<Comment> findById(long id) {
+            return Optional.ofNullable(store.get(id));
+        }
+
+        @Override
+        public Comment save(Comment comment) {
+            if (comment.id() == null) {
+                comment.assignId(sequence.incrementAndGet());
+            }
+            store.put(comment.id(), comment);
+            return comment;
+        }
+    }
+
+    public static class StubViewCounter implements ViewCounter {
+        public final List<Long> incremented = new ArrayList<>();
+
+        @Override
+        public void increment(long questionId) {
+            incremented.add(questionId);
+        }
+    }
+
+    public static class StubReadModel implements QaReadModel {
+        public PageResult<QuestionRow> questionsPage = PageResult.empty(1, 20);
+        public QuestionRow question;
+        public List<AnswerRow> answers = List.of();
+        public List<CommentRow> comments = List.of();
+        public Map<String, Integer> myVotes = Map.of();
+        public List<TagView> tags = List.of();
+
+        @Override
+        public PageResult<QuestionRow> listQuestions(Long courseId, PageRequest page) {
+            return questionsPage;
+        }
+
+        @Override
+        public Optional<QuestionRow> findQuestion(long questionId) {
+            return Optional.ofNullable(question);
+        }
+
+        @Override
+        public List<AnswerRow> findAnswers(long questionId) {
+            return answers;
+        }
+
+        @Override
+        public List<CommentRow> findComments(long questionId) {
+            return comments;
+        }
+
+        @Override
+        public Map<String, Integer> findMyVotes(long voterId, long questionId, Collection<Long> answerIds) {
+            return myVotes;
+        }
+
+        @Override
+        public List<TagView> popularTags(int limit) {
+            return tags;
         }
     }
 }
