@@ -35,11 +35,24 @@ public class Course {
         if (code == null || !CODE.matcher(code).matches()) {
             throw new BusinessRuleException("ID-1010", "课程代码应为 2–20 位字母、数字或连字符");
         }
-        return new Course(null, code.toUpperCase(), Guard.requireText(name, 2, 50, "ID-1011", "课程名称"),
-                Guard.requireText(term, 2, 20, "ID-1012", "学期"), actor.userId(), now);
+        
+        return new Course(
+                null,
+                code.toUpperCase(),
+                Guard.requireText(name, 2, 50, "ID-1011", "课程名称"),
+                Guard.requireText(term, 2, 20, "ID-1012", "学期"),
+                actor.userId(),
+                now
+        );
     }
 
-    public static Course reconstitute(Long id, String code, String name, String term, long teacherId, Instant createdAt) {
+    public static Course reconstitute(
+            Long id, 
+            String code, 
+            String name, 
+            String term, 
+            long teacherId, 
+            Instant createdAt) {
         return new Course(id, code, name, term, teacherId, createdAt);
     }
 
