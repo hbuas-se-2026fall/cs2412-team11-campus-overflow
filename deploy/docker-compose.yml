@@ -87,7 +87,22 @@ services:
     ports: ["3000:3000"]
     volumes: ["grafana-data:/var/lib/grafana"]
 
+  # ======= 新增的 SonarQube 服务 =======
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: co-sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
 volumes:
   mysql-data:
   redis-data:
   grafana-data:
+  # ======= 新增的 volumes =======
+  sonarqube_data:
+  sonarqube_extensions:

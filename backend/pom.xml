@@ -37,6 +37,11 @@
         <jacoco.version>0.8.12</jacoco.version>
         <!-- 领域层行覆盖率门禁（适应度函数 FF-4）。学生版初始为 0，Sprint 4 前应提升到 0.80 -->
         <domain.coverage.minimum>0</domain.coverage.minimum>
+        
+        <!-- Lab 7: 新增属性 -->
+        <checkstyle.version>3.5.0</checkstyle.version>
+        <sonar.version>5.0.0.4389</sonar.version>
+        <jacoco.line.min>0.70</jacoco.line.min>
     </properties>
 
     <dependencyManagement>
@@ -190,6 +195,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <!-- 原有 JaCoCo 插件，增加 check 校验 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -203,8 +209,29 @@
                         <phase>verify</phase>
                         <goals><goal>report</goal></goals>
                     </execution>
+                    <!-- Lab 7: 新增 JaCoCo 覆盖率阈值检查 -->
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>verify</phase>
+                        <goals><goal>check</goal></goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.line.min}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
+            <!-- 原有 Failsafe 插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -216,6 +243,32 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Lab 7: 新增 Checkstyle 插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <configuration>
+                    <configLocation>${maven.multiModuleProjectDirectory}/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                    <violationSeverity>error</violationSeverity>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-verify</id>
+                        <phase>verify</phase>
+                        <goals><goal>check</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Lab 7: 新增 Sonar 插件 -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.version}</version>
             </plugin>
         </plugins>
     </build>
