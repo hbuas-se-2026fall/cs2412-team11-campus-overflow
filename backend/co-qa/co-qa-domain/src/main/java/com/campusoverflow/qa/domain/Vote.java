@@ -25,7 +25,7 @@ public class Vote {
     public static Vote cast(long voterId, long targetAuthorId, TargetType targetType, long targetId, int value,
                             Instant now) {
         if (voterId == targetAuthorId) {
-            throw new BusinessRuleException("QA-1007", "不能给自己的内容投票");
+            throw new BusinessRuleException("QA-1015", "不能给自己的内容投票");
         }
         return new Vote(null, voterId, targetType, targetId, checkValue(value), now);
     }

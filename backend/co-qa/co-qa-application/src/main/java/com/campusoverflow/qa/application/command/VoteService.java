@@ -54,7 +54,7 @@ public class VoteService {
         }
         Target target = resolve(type, targetId);
         if (actor.is(target.authorId())) {
-            throw new BusinessRuleException("QA-1007", "不能给自己的内容投票");
+            throw new BusinessRuleException("QA-1015", "不能给自己的内容投票");
         }
 
         Instant now = Instant.now(clock);
