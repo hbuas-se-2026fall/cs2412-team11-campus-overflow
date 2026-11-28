@@ -11,6 +11,8 @@ import com.campusoverflow.shared.domain.NotFoundException;
 import com.campusoverflow.shared.page.PageRequest;
 import com.campusoverflow.shared.page.PageResult;
 import com.campusoverflow.shared.security.Actor;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,13 +34,27 @@ public class ReputationQueryService {
     }
 
     public ReputationProfileView profile(long userId, Actor viewerOrNull) {
-        // TODO(S3)：实现 ReputationQueryService.profile——参考领域单元测试与 arc42 文档中的业务规则
-        throw new UnsupportedOperationException("TODO(S3)：ReputationQueryService.profile 尚未实现");
+        UserSummary user = identity.findUser(userId)
+                .orElseThrow(() -> new NotFoundException("RP-4003", "用户不存在"));
+        Optional<ReputationAccount> account = accounts.findByUserId(userId);
+        int reputation = account.map(ReputationAccount::reputation).orElse(0);
+        boolean self = viewerOrNull != null && (viewerOrNull.is(userId) || viewerOrNull.isAdmin());
+        Integer availablePoints = self ? account.map(ReputationAccount::availablePoints).orElse(0) : null;
+        Integer frozenPoints = self ? account.map(ReputationAccount::frozenPoints).orElse(0) : null;
+        List<ReputationProfileView.BadgeView> badgeViews = badges.findByUser(userId).stream()
+                .map(b -> new ReputationProfileView.BadgeView(b.type().name(), b.type().displayName(),
+                        b.type().description(), b.awardedAt()))
+                .toList();
+        return new ReputationProfileView(user.id(), user.displayName(), reputation, availablePoints, frozenPoints,
+                badgeViews);
     }
 
     /** 声誉流水属于个人数据：仅本人与管理员可查看。 */
     public PageResult<LedgerEntryView> ledger(long userId, Actor viewer, PageRequest page) {
-        // TODO(S3)：实现 ReputationQueryService.ledger——参考领域单元测试与 arc42 文档中的业务规则
-        throw new UnsupportedOperationException("TODO(S3)：ReputationQueryService.ledger 尚未实现");
+        if (viewer == null || (!viewer.is(userId) && !viewer.isAdmin())) {
+            throw new ForbiddenException("RP-1002", "无权查看该用户的声誉流水");
+        }
+        return ledger.findByUser(userId, page).map(e -> new LedgerEntryView(e.id(), e.reason().name(),
+                e.reason().label(), e.delta(), e.refType(), e.refId(), e.createdAt()));
     }
 }
