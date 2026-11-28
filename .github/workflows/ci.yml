@@ -40,7 +40,12 @@ jobs:
       # 阶段 5：集成测试（Testcontainers 拉起真实 MySQL + Redis）
       - name: 集成测试
         run: mvn -B -f backend/pom.xml verify -Dsurefire.skip=true
-
+      - name: SonarQube 扫描
+        if: github.event_name == 'push'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn -B -f backend/pom.xml sonar:sonar -Dsonar.token=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
       - name: 归档测试报告
         if: always()
         uses: actions/upload-artifact@v4

@@ -17,6 +17,8 @@
         <module name="TypeName"/>
         <module name="MethodName"/>
         <module name="LocalVariableName"/>
-        <module name="ConstantName"/>
+        <module name="ConstantName">
+            <property name="format" value="^([A-Z][A-Z0-9]*(_[A-Z0-9]+)*|log)$"/>
+        </module>
     </module>
 </module>
