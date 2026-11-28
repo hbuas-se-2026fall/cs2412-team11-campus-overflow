@@ -68,3 +68,7 @@ export function post<T>(url: string, body?: unknown): Promise<T> {
 export function del<T>(url: string): Promise<T> {
   return http.delete<T>(url).then((response) => response.data);
 }
+
+export function put<T>(url: string, body?: unknown): Promise<T> {
+  return http.put<T>(url, body).then((response) => response.data);
+}

@@ -343,3 +343,34 @@ article h1 {
 .error {
   color: var(--danger);
 }
+
+.commentlist {
+  list-style: none;
+  padding-left: 0;
+  margin: 8px 0;
+  font-size: 13px;
+}
+.commentform {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+.commentform input {
+  flex: 1;
+}
+.votebox button {
+  width: 28px;
+  padding: 2px 0;
+  cursor: pointer;
+}
+.answerform textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.is-accepted {
+  border-left: 4px solid #2e7d32;
+}
+.accepted {
+  color: #2e7d32;
+  font-weight: 600;
+}
