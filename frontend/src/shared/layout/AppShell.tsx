@@ -21,6 +21,7 @@ export function AppShell() {
         </Link>
         <nav>
           <Link to="/questions">问题</Link>
+          <Link to="/leaderboard">排行榜</Link>
           {me && <Link to="/questions/new">我要提问</Link>}
         </nav>
         <div className="spacer" />
