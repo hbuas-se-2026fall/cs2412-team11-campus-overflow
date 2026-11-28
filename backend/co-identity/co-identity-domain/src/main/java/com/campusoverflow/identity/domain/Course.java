@@ -39,7 +39,8 @@ public class Course {
                 Guard.requireText(term, 2, 20, "ID-1012", "学期"), actor.userId(), now);
     }
 
-    public static Course reconstitute(Long id, String code, String name, String term, long teacherId, Instant createdAt) {
+    public static Course reconstitute(Long id, String code, String name, String term, long teacherId,
+                                      Instant createdAt) {
         return new Course(id, code, name, term, teacherId, createdAt);
     }
 

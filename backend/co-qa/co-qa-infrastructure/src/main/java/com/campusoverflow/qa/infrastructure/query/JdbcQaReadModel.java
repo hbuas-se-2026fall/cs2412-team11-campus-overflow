@@ -87,7 +87,8 @@ public class JdbcQaReadModel implements QaReadModel {
         String sql = "SELECT target_type, target_id, value FROM qa_vote WHERE voter_id = :voter AND "
                 + (answerIds.isEmpty()
                 ? "target_type = 'QUESTION' AND target_id = :qid"
-                : "((target_type = 'QUESTION' AND target_id = :qid) OR (target_type = 'ANSWER' AND target_id IN (:aids)))");
+                : "((target_type = 'QUESTION' AND target_id = :qid)"
+                + " OR (target_type = 'ANSWER' AND target_id IN (:aids)))");
         jdbc.query(sql, p, rs -> {
             result.put(rs.getString("target_type") + ":" + rs.getLong("target_id"), rs.getInt("value"));
         });

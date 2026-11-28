@@ -43,7 +43,8 @@ public class FieldEncryptor {
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             cipher.init(Cipher.ENCRYPT_MODE, aesKey, new GCMParameterSpec(TAG_BITS, iv));
             byte[] ct = cipher.doFinal(plain.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(ByteBuffer.allocate(iv.length + ct.length).put(iv).put(ct).array());
+            byte[] packed = ByteBuffer.allocate(iv.length + ct.length).put(iv).put(ct).array();
+            return Base64.getEncoder().encodeToString(packed);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("字段加密失败", e);
         }
