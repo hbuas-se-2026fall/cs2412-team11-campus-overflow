@@ -15,7 +15,8 @@ public class RedisLoginThrottle implements LoginThrottle {
     private final StringRedisTemplate redis;
     private final int maxFailures;
 
-    public RedisLoginThrottle(StringRedisTemplate redis, @Value("${co.security.login-max-failures:5}") int maxFailures) {
+    public RedisLoginThrottle(StringRedisTemplate redis,
+                              @Value("${co.security.login-max-failures:5}") int maxFailures) {
         this.redis = redis;
         this.maxFailures = maxFailures;
     }

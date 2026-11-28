@@ -54,7 +54,8 @@ public class LeaderboardService {
         } else {
             entries = store.top(period, clock.instant(), size);
         }
-        Map<Long, UserSummary> users = identity.findUsers(entries.stream().map(LeaderboardStore.Entry::userId).toList());
+        Map<Long, UserSummary> users = identity.findUsers(
+                entries.stream().map(LeaderboardStore.Entry::userId).toList());
         List<LeaderboardEntryView> result = new ArrayList<>(entries.size());
         int rank = 1;
         for (LeaderboardStore.Entry entry : entries) {

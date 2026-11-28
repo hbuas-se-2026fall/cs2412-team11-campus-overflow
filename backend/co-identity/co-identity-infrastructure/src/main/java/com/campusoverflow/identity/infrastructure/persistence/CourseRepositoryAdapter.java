@@ -73,7 +73,8 @@ public class CourseRepositoryAdapter implements CourseRepository {
     }
 
     private static Course toDomain(CourseJpaEntity e) {
-        return Course.reconstitute(e.getId(), e.getCode(), e.getName(), e.getTerm(), e.getTeacherId(), e.getCreatedAt());
+        return Course.reconstitute(e.getId(), e.getCode(), e.getName(), e.getTerm(), e.getTeacherId(),
+                e.getCreatedAt());
     }
 
     private static CourseMember toDomain(CourseMemberJpaEntity e) {

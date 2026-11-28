@@ -48,7 +48,9 @@ public class RedisViewCounter implements ViewCounter {
             redis.rename(PENDING, flushing); // 原子地“摘走”当前批次，新增量写入新的 PENDING
             Map<Object, Object> entries = redis.opsForHash().entries(flushing);
             List<Object[]> args = entries.entrySet().stream()
-                    .map(e -> new Object[] {Long.parseLong(e.getValue().toString()), Long.parseLong(e.getKey().toString())})
+                    .map(e -> new Object[] {
+                            Long.parseLong(e.getValue().toString()),
+                            Long.parseLong(e.getKey().toString())})
                     .toList();
             jdbc.batchUpdate("UPDATE qa_question SET view_count = view_count + ? WHERE id = ?", args);
             redis.delete(flushing);
