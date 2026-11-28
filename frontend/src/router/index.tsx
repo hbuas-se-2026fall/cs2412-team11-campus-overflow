@@ -5,6 +5,7 @@ import { QuestionListPage } from '@/pages/QuestionListPage';
 import { NewQuestionPage } from '@/pages/NewQuestionPage';
 import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
 import { LoginPage } from '@/pages/LoginPage';
+import { LeaderboardPage } from '@/pages/LeaderboardPage';
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       },
       { path: 'questions/:id', element: <QuestionDetailPage /> },
       { path: 'login', element: <LoginPage /> },
+      { path: 'leaderboard', element: <LeaderboardPage /> },
     ],
   },
 ]);

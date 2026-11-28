@@ -343,3 +343,18 @@ article h1 {
 .error {
   color: var(--danger);
 }
+.board {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.board th,
+.board td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.board th {
+  font-weight: 600;
+  color: #555;
+}
