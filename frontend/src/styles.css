@@ -343,6 +343,12 @@ article h1 {
 .error {
   color: var(--danger);
 }
+.listlayout { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+.tagpanel ul { list-style: none; padding-left: 0; }
+.tagpanel li { margin: 6px 0; }
+.tagpanel button.tag { cursor: pointer; }
+.tag.active { background: #1976d2; color: #fff; }
+.linklike { background: none; border: none; color: #1976d2; cursor: pointer; padding: 0; }
 .board {
   width: 100%;
   border-collapse: collapse;
