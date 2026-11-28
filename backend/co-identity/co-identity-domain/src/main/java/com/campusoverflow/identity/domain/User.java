@@ -37,7 +37,8 @@ public class User {
     private final long version;
 
     private User(Long id, String username, String displayName, String email, String passwordHash, Role role,
-                 UserStatus status, boolean verified, String college, String className, Instant createdAt, long version) {
+                 UserStatus status, boolean verified, String college, String className, Instant createdAt,
+                 long version) {
         this.id = id;
         this.username = username;
         this.displayName = displayName;

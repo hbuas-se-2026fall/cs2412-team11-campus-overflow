@@ -102,7 +102,8 @@ public class JdbcSearchIndex implements SearchIndex {
     }
 
     private void replaceTags(long questionId, List<String> tags) {
-        jdbc.update("DELETE FROM dis_question_tag WHERE question_id = :id", new MapSqlParameterSource("id", questionId));
+        jdbc.update("DELETE FROM dis_question_tag WHERE question_id = :id",
+                new MapSqlParameterSource("id", questionId));
         if (!tags.isEmpty()) {
             jdbc.batchUpdate("INSERT INTO dis_question_tag (question_id, tag) VALUES (:id, :tag)",
                     tags.stream().map(t -> new MapSqlParameterSource().addValue("id", questionId).addValue("tag", t))
