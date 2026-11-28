@@ -349,3 +349,48 @@ article h1 {
 .tagpanel button.tag { cursor: pointer; }
 .tag.active { background: #1976d2; color: #fff; }
 .linklike { background: none; border: none; color: #1976d2; cursor: pointer; padding: 0; }
+.board {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.board th,
+.board td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.board th {
+  font-weight: 600;
+  color: #555;
+
+.commentlist {
+  list-style: none;
+  padding-left: 0;
+  margin: 8px 0;
+  font-size: 13px;
+}
+.commentform {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+.commentform input {
+  flex: 1;
+}
+.votebox button {
+  width: 28px;
+  padding: 2px 0;
+  cursor: pointer;
+}
+.answerform textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.is-accepted {
+  border-left: 4px solid #2e7d32;
+}
+.accepted {
+  color: #2e7d32;
+  font-weight: 600;
+}
